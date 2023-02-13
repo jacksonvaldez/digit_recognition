@@ -38,20 +38,34 @@ def show_image(pixels):
 
 
 
-
+# Neural network layers: 784(input) - 16(hidden) - 10(output)
 class Neural_Network:
     # CREATE Neural Network and set up parameters
-    def __init__():
+    def __init__(self):
+        # Creates a random set of weights
+        self.w_i_h = np.random.uniform(-0.5, 0.5, (16, 784)) # Weights connecting the input layer 'i', and the hidden layer 'h'
+        self.w_h_o = np.random.uniform(-0.5, 0.5, (10, 16)) # Weights connecting the hidden layer 'h', and the output layer 'o'
+
+        # Creates a set of biases, all 0 to start
+        self.b_i_h = np.full(16, 0) # Creates an array of 16 elements, each with the value of 0
+        self.b_h_o = np.full(10, 0) # Creates an array of 10 elements, each with the value of 0
         return
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
-    def train():
+    def train(images_train, labels_train):
+        
         return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
-    def query():
+    def query(pixels):
+
+        # Compute the 16 neuron values of the hidden layer
+        # Compute the 10 neuron values of the output layer
+
         return
 
+neural_net = Neural_Network()
+print(neural_net.b_h_o)
 
 
 
