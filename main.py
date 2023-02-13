@@ -29,11 +29,20 @@ def load_mnist(path, kind='train'):
 
 
 # pixels is a 1D numpy array with 784 pixels, each being a byte
-def show_image(pixels):
+def save_image(pixels):
     img = pixels.reshape(28, 28)
     plt.imshow(img, cmap='gray')
     plt.savefig('mnist_digit.png')
     return
+
+
+# This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The softmax of x is a numpy array with the same shape as x, where each element is the corresponding softmax value.
+def softmax(x):
+    return x
+
+# This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The reLU of x is a numpy array with the same shape as x, where each element is the corresponding reLU value.
+def reLU(array):
+    return np.maximum(0, array)
 
 
 
@@ -41,14 +50,15 @@ def show_image(pixels):
 # Neural network layers: 784(input) - 16(hidden) - 10(output)
 class Neural_Network:
     # CREATE Neural Network and set up parameters
+
     def __init__(self):
         # Creates a random set of weights
         self.w_i_h = np.random.uniform(-0.5, 0.5, (16, 784)) # Weights connecting the input layer 'i', and the hidden layer 'h'
         self.w_h_o = np.random.uniform(-0.5, 0.5, (10, 16)) # Weights connecting the hidden layer 'h', and the output layer 'o'
 
         # Creates a set of biases, all 0 to start
-        self.b_i_h = np.full(16, 0) # Creates an array of 16 elements, each with the value of 0
-        self.b_h_o = np.full(10, 0) # Creates an array of 10 elements, each with the value of 0
+        self.b_i_h = np.full(16, 0).reshape(16, 1) # Creates an array of 16 elements, each with the value of 0
+        self.b_h_o = np.full(10, 0).reshape(10, 1) # Creates an array of 10 elements, each with the value of 0
         return
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
@@ -57,16 +67,25 @@ class Neural_Network:
         return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
-    def query(pixels):
+    def query(self, pixels):
 
-        # Compute the 16 neuron values of the hidden layer
+        # Reshape certain matrices so they can be added or multiplied together
+        pixels = pixels.reshape(1, len(pixels))
+
+
+        # Compute the 16 neuron values of the hidden layer 'h'
+        unactive_h = self.w_i_h * pixels
+        unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
+        unactive_h = unactive_h + self.b_i_h
+        active_h = reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
+
         # Compute the 10 neuron values of the output layer
+        active_h = active_h.reshape(1, 16)
+        unactive_o = self.w_h_o * active_h
+        unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
+        active_o = softmax(unactive_o) # Uses a Softmax function to turn the 10 neuron values to probabilites ranging from 0 - 1
 
-        return
-
-neural_net = Neural_Network()
-print(neural_net.b_h_o)
-
+        return active_o
 
 
 
@@ -74,6 +93,10 @@ print(neural_net.b_h_o)
 images_train, labels_train = load_mnist('mnist_data', kind='train')
 # images_test, labels_test = load_mnist('mnist_data', kind='t10k')
 
+pixels = images_train[69] # Gets the pixel values of the 69th image in the training set
+save_image(pixels) # Saves the 69th image of the training set as mnist_digit.png
 
-pixels = images_train[569]
-show_image(pixels)
+
+neural_net = Neural_Network()
+results = neural_net.query(pixels)
+print(results)
