@@ -38,7 +38,15 @@ def save_image(pixels):
 
 # This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The softmax of x is a numpy array with the same shape as x, where each element is the corresponding softmax value.
 def softmax(x):
-    return x
+    # Scales the values down to a range from -1 to 1 but still proportional so there is no infinity error
+    max_val = np.linalg.norm(x, ord=np.inf)
+    normalized = x / max_val
+    x = np.clip(normalized, -1, 1)
+
+    # Calculates softmax
+    result = np.exp(x)/np.exp(x).sum()
+
+    return(result * 100) # Returns as percentages so output is easier to read.
 
 # This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The reLU of x is a numpy array with the same shape as x, where each element is the corresponding reLU value.
 def reLU(array):
@@ -84,7 +92,6 @@ class Neural_Network:
         unactive_o = self.w_h_o * active_h
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
         active_o = softmax(unactive_o) # Uses a Softmax function to turn the 10 neuron values to probabilites ranging from 0 - 1
-
         return active_o
 
 
@@ -100,3 +107,5 @@ save_image(pixels) # Saves the 69th image of the training set as mnist_digit.png
 neural_net = Neural_Network()
 results = neural_net.query(pixels)
 print(results)
+
+
