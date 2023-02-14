@@ -43,6 +43,7 @@ def softmax(x):
     normalized = x / max_val
     x = np.clip(normalized, -1, 1)
 
+
     # Calculates softmax
     result = np.exp(x)/np.exp(x).sum()
 
@@ -98,14 +99,15 @@ class Neural_Network:
 
 # Load the MNIST dataset
 images_train, labels_train = load_mnist('mnist_data', kind='train')
-# images_test, labels_test = load_mnist('mnist_data', kind='t10k')
+images_test, labels_test = load_mnist('mnist_data', kind='t10k')
 
-pixels = images_train[69] # Gets the pixel values of the 69th image in the training set
-save_image(pixels) # Saves the 69th image of the training set as mnist_digit.png
+pixels = images_test[487] # Gets the pixel values of the 487th image in the testing set
+save_image(pixels) # Saves the 69th image of the testing set as mnist_digit.png
 
 
 neural_net = Neural_Network()
 results = neural_net.query(pixels)
 print(results)
+print(results.sum())
 
 
