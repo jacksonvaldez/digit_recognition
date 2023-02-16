@@ -62,12 +62,12 @@ class Neural_Network:
 
     def __init__(self):
         # Creates a random set of weights
-        self.w_i_h = np.random.uniform(-0.5, 0.5, (16, 784)) # Weights connecting the input layer 'i', and the hidden layer 'h'
-        self.w_h_o = np.random.uniform(-0.5, 0.5, (10, 16)) # Weights connecting the hidden layer 'h', and the output layer 'o'
+        self.weights1 = np.random.uniform(-0.5, 0.5, (16, 784)) # Weights connecting the input layer and the hidden layer (16 x 784)
+        self.weights2 = np.random.uniform(-0.5, 0.5, (10, 16)) # Weights connecting the hidden layer and the output layer (10 x 16)
 
         # Creates a set of biases, all 0 to start
-        self.b_i_h = np.full(16, 0).reshape(16, 1) # Creates an array of 16 elements, each with the value of 0
-        self.b_h_o = np.full(10, 0).reshape(10, 1) # Creates an array of 10 elements, each with the value of 0
+        self.biases1 = np.full(16, 0).reshape(16, 1) # Biases connecting the input layer and the hidden layer (16 x 1)
+        self.biases2 = np.full(10, 0).reshape(10, 1) # Biases connecting the hidden layer and the output layer (10 x 1)
         return
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
@@ -83,15 +83,16 @@ class Neural_Network:
 
 
         # Compute the 16 neuron values of the hidden layer 'h'
-        unactive_h = self.w_i_h * pixels
+        unactive_h = self.weights1 * pixels
         unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
-        unactive_h = unactive_h + self.b_i_h
+        unactive_h = unactive_h + self.biases1
         active_h = reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
         # Compute the 10 neuron values of the output layer
         active_h = active_h.reshape(1, 16)
-        unactive_o = self.w_h_o * active_h
+        unactive_o = self.weights2 * active_h
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
+        unactive_o = unactive_o + self.biases2
         active_o = softmax(unactive_o) # Uses a Softmax function to turn the 10 neuron values to probabilites ranging from 0 - 1
         return active_o
 
