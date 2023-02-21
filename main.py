@@ -27,7 +27,6 @@ def load_mnist(path, kind='train'):
 
 
 
-
 # pixels is a 1D numpy array with 784 pixels, each being a byte
 def save_image(pixels):
     img = pixels.reshape(28, 28)
@@ -36,23 +35,27 @@ def save_image(pixels):
     return
 
 
-# This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The softmax of x is a numpy array with the same shape as x, where each element is the corresponding softmax value.
-def softmax(x):
-    # Scales the values down to a range from -1 to 1 but still proportional so there is no infinity error
-    max_val = np.linalg.norm(x, ord=np.inf)
-    normalized = x / max_val
-    x = np.clip(normalized, -1, 1)
+
+def probability(x):
+    sum = np.sum(x)
+    return x / sum
+
+def probability_derivative(x):
+    sum = np.sum(x)
+
+    numerator = sum - x
+    denominator = sum * sum
+    result = numerator / denominator
+    return result
 
 
-    # Calculates softmax
-    result = np.exp(x)/np.exp(x).sum()
 
-    return(result * 100) # Returns as percentages so output is easier to read.
 
-# This function takes in an input x, which is a numpy array of real numbers, and returns the softmax of x. The reLU of x is a numpy array with the same shape as x, where each element is the corresponding reLU value.
-def reLU(array):
-    return np.maximum(0, array)
+def reLU(x):
+    return np.maximum(0, x)
 
+def reLU_derivative(x):
+    return np.where(x <= 0, 0, 1)    
 
 
 
@@ -71,30 +74,92 @@ class Neural_Network:
         return
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
-    def train(images_train, labels_train):
-        
+    def train(self, images_train, labels_train, learn_rate, a):
+
+        assert len(images_train) == len(labels_train) # The number of training images should match the number of labels for all the images
+
+        for training_example_index in range(len(images_train)):
+            query = self.query(images_train[training_example_index])
+            desired_output = np.full(10, 0).reshape(10, 1)
+            desired_output[labels_train[training_example_index]] = 1
+
+            print('---------------------------------') if a == False else ''
+            term1 = 2 * (query[4] - desired_output)
+            term2 = probability_derivative(query[3])
+            term3 = query[2].reshape(1, 16)
+            print('term1 shape: ', term1.shape) if a == False else ''
+            print('term2 shape: ', term2.shape) if a == False else ''
+            print('term3 shape: ', term3.shape) if a == False else ''
+            weights2_gradient = term3 * term2 * term1
+            print('---------------------------------') if a == False else ''
+
+
+            term1 = query[0].reshape(1, 1, 784)
+            term2 = reLU_derivative(query[1]).reshape(1, 16)
+            term3 = self.weights2
+            term4 = probability_derivative(query[3])
+            term5 = 2 * (query[4] - desired_output)
+            print('term1 shape: ', term1.shape) if a == False else ''
+            print('term2 shape: ', term2.shape) if a == False else ''
+            print('term3 shape: ', term3.shape) if a == False else ''
+            print('term4 shape: ', term4.shape) if a == False else ''
+            print('term5 shape: ', term5.shape) if a == False else ''
+            weights1_gradient = (term5 * term4 * term3 * term2).reshape(10, 16, 1)
+            weights1_gradient = weights1_gradient * term1
+            weights1_gradient = np.sum(weights1_gradient, axis=0)
+            print('---------------------------------') if a == False else ''
+
+
+            term1 = 2 * (query[4] - desired_output)
+            term2 = probability_derivative(query[3])
+            print('term1 shape: ', term1.shape) if a == False else ''
+            print('term2 shape: ', term2.shape) if a == False else ''
+            biases2_gradient = term2 * term1
+            print('---------------------------------') if a == False else ''
+
+
+            term1 = reLU_derivative(query[1]).reshape(1, 16)
+            term2 = self.weights2
+            term3 = probability_derivative(query[3])
+            term4 = 2 * (query[4] - desired_output)
+            print('term1 shape: ', term1.shape) if a == False else ''
+            print('term2 shape: ', term2.shape) if a == False else ''
+            print('term3 shape: ', term3.shape) if a == False else ''
+            print('term4 shape: ', term4.shape) if a == False else ''
+            biases1_gradient = term4 * term3 * term2 * term1
+            biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
+            print('---------------------------------') if a == False else ''
+
+
+            # Update weights and biases
+            self.weights1 = self.weights1 - learn_rate * weights1_gradient
+            self.weights2 = self.weights2 - learn_rate * weights2_gradient
+            self.biases1 = self.biases1 - learn_rate * biases1_gradient
+            self.biases2 = self.biases2 - learn_rate * biases2_gradient
+            if a == False:
+                return
         return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
     def query(self, pixels):
 
-        # Reshape certain matrices so they can be added or multiplied together
-        pixels = pixels.reshape(1, len(pixels))
-
-
         # Compute the 16 neuron values of the hidden layer 'h'
-        unactive_h = self.weights1 * pixels
+        unactive_h = self.weights1 * pixels.reshape(1, len(pixels))
         unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
         unactive_h = unactive_h + self.biases1
         active_h = reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
-        # Compute the 10 neuron values of the output layer
-        active_h = active_h.reshape(1, 16)
-        unactive_o = self.weights2 * active_h
+        # Compute the 10 neuron values of the output layer 'o'
+        unactive_o = self.weights2 * active_h.reshape(1, 16)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
         unactive_o = unactive_o + self.biases2
-        active_o = softmax(unactive_o) # Uses a Softmax function to turn the 10 neuron values to probabilites ranging from 0 - 1
-        return active_o
+        active_o = probability(unactive_o) # Uses probability to compute activated neurons of output layer
+
+        return pixels, unactive_h, active_h, unactive_o, active_o
+
+    # Tests the accurancy of the trained weights and biases using testing data
+    def test_model(images_test, labels_test):
+        return
 
 
 
@@ -102,13 +167,18 @@ class Neural_Network:
 images_train, labels_train = load_mnist('mnist_data', kind='train')
 images_test, labels_test = load_mnist('mnist_data', kind='t10k')
 
-pixels = images_test[487] # Gets the pixel values of the 487th image in the testing set
+pixels = images_test[485] # Gets the pixel values of the 487th image in the testing set
 save_image(pixels) # Saves the 69th image of the testing set as mnist_digit.png
 
 
 neural_net = Neural_Network()
-results = neural_net.query(pixels)
-print(results)
-print(results.sum())
+query = neural_net.query(pixels)
+print('Untrained Output')
+print(query[4])
+print(query[4].sum()) # should equal 100
 
-
+print('Trained Output')
+neural_net.train(images_train, labels_train, 0.001, True)
+query = neural_net.query(pixels)
+print(query[4])
+print(query[4].sum()) # should equal 100
