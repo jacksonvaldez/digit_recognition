@@ -48,15 +48,6 @@ def probability_derivative(x):
     result = numerator / denominator
     return result
 
-arr = np.array([1, 2, 3, 4])
-print(probability(arr))
-print(probability_derivative(arr))
-arr[0] += 1
-print(probability(arr))
-arr = np.array([1, 2, 3, 4])
-arr[1] += 1
-print(probability(arr))
-
 
 
 def reLU(x):
@@ -72,16 +63,18 @@ class Neural_Network:
     # CREATE Neural Network and set up parameters
 
     def __init__(self):
-        self.weights1 = np.load('trained_params/weights1.npy')
-        self.weights2 = np.load('trained_params/weights2.npy')
-        self.biases1 = np.load('trained_params/biases1.npy')
-        self.biases2 = np.load('trained_params/biases2.npy')
+
         return
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
-    def train(self, images_train, labels_train, learn_rate, a):
+    def train(self, images_train, labels_train, learn_rate):
 
         assert len(images_train) == len(labels_train) # The number of training images should match the number of labels for all the images
+
+        weights1 = np.load('trained_params/weights1.npy')
+        weights2 = np.load('trained_params/weights2.npy')
+        biases1 = np.load('trained_params/biases1.npy')
+        biases2 = np.load('trained_params/biases2.npy')
 
         weights1_gradient_final = np.zeros([16, 784])
         weights2_gradient_final = np.zeros([10, 16])
@@ -93,101 +86,88 @@ class Neural_Network:
             desired_output = np.full(10, 0).reshape(10, 1)
             desired_output[labels_train[training_example_index]] = 1
 
-            print('---------------------------------') if a == False else ''
+
             term1 = 2 * (query[4] - desired_output)
             term2 = probability_derivative(query[3])
             term3 = query[2].reshape(1, 16)
-            print('term1 shape: ', term1.shape) if a == False else ''
-            print('term2 shape: ', term2.shape) if a == False else ''
-            print('term3 shape: ', term3.shape) if a == False else ''
             weights2_gradient = term3 * term2 * term1
-            print('---------------------------------') if a == False else ''
-
 
             term1 = 2 * (query[4] - desired_output)
             term2 = probability_derivative(query[3])
-            term3 = np.sum(self.weights2, axis=0).reshape(1, 16)
+            term3 = np.sum(weights2, axis=0).reshape(1, 16)
             term4 = reLU_derivative(query[1]).reshape(1, 16)
             term5 = query[0].reshape(784, 1)
-            
-            print('term1 shape: ', term1.shape) if a == False else ''
-            print('term2 shape: ', term2.shape) if a == False else ''
-            print('term3 shape: ', term3.shape) if a == False else ''
-            print('term4 shape: ', term4.shape) if a == False else ''
-            print('term5 shape: ', term5.shape) if a == False else ''
             weights1_gradient = (term1 * term2 * term3 * term4).reshape(10, 16, 1)
             term5 = term5.reshape(1, 1, 784)
             weights1_gradient = weights1_gradient * term5
             weights1_gradient = np.sum(weights1_gradient, axis=0)
-            print('---------------------------------') if a == False else ''
-
 
             term1 = 2 * (query[4] - desired_output)
             term2 = probability_derivative(query[3])
-            print('term1 shape: ', term1.shape) if a == False else ''
-            print('term2 shape: ', term2.shape) if a == False else ''
             biases2_gradient = term2 * term1
-            print('---------------------------------') if a == False else ''
-
 
             term1 = 2 * (query[4] - desired_output)
             term2 = probability_derivative(query[3])
-            term3 = np.sum(self.weights2, axis=0).reshape(1, 16)
+            term3 = np.sum(weights2, axis=0).reshape(1, 16)
             term4 = reLU_derivative(query[1]).reshape(1, 16)
-            
-            print('term1 shape: ', term1.shape) if a == False else ''
-            print('term2 shape: ', term2.shape) if a == False else ''
-            print('term3 shape: ', term3.shape) if a == False else ''
-            print('term4 shape: ', term4.shape) if a == False else ''
             biases1_gradient = term4 * term3 * term2 * term1
             biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
-            print('---------------------------------') if a == False else ''
+
 
             weights1_gradient_final += weights1_gradient
             weights2_gradient_final += weights2_gradient
             biases1_gradient_final += biases1_gradient
             biases2_gradient_final += biases2_gradient
 
-            # Update weights and biases
-            if a == False:
-                return
 
         weights1_gradient_final /= 60000
         weights2_gradient_final /= 60000
         biases1_gradient_final /= 60000
         biases2_gradient_final /= 60000
 
-        self.weights1 = self.weights1 - learn_rate * weights1_gradient_final
-        self.weights2 = self.weights2 - learn_rate * weights2_gradient_final
-        self.biases1 = self.biases1 - learn_rate * biases1_gradient_final
-        self.biases2 = self.biases2 - learn_rate * biases2_gradient_final
+        weights1 = weights1 - learn_rate * weights1_gradient_final
+        weights2 = weights2 - learn_rate * weights2_gradient_final
+        biases1 = biases1 - learn_rate * biases1_gradient_final
+        biases2 = biases2 - learn_rate * biases2_gradient_final
 
-        np.save('trained_params/weights1.npy', self.weights1)
-        np.save('trained_params/weights2.npy', self.weights2)
-        np.save('trained_params/biases1.npy', self.biases1)
-        np.save('trained_params/biases2.npy', self.biases2)
+        np.save('trained_params/weights1.npy', weights1)
+        np.save('trained_params/weights2.npy', weights2)
+        np.save('trained_params/biases1.npy', biases1)
+        np.save('trained_params/biases2.npy', biases2)
         return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
     def query(self, pixels):
+        weights1 = np.load('trained_params/weights1.npy')
+        weights2 = np.load('trained_params/weights2.npy')
+        biases1 = np.load('trained_params/biases1.npy')
+        biases2 = np.load('trained_params/biases2.npy')
 
         # Compute the 16 neuron values of the hidden layer 'h'
-        unactive_h = self.weights1 * pixels.reshape(1, len(pixels))
+        unactive_h = weights1 * pixels.reshape(1, len(pixels))
         unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
-        unactive_h = unactive_h + self.biases1
+        unactive_h = unactive_h + biases1
         active_h = reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
         # Compute the 10 neuron values of the output layer 'o'
-        unactive_o = self.weights2 * active_h.reshape(1, 16)
+        unactive_o = weights2 * active_h.reshape(1, 16)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
-        unactive_o = unactive_o + self.biases2
+        unactive_o = unactive_o + biases2
         active_o = probability(unactive_o) # Uses probability to compute activated neurons of output layer
 
         return pixels, unactive_h, active_h, unactive_o, active_o
 
     # Tests the accurancy of the trained weights and biases using testing data
-    def test_model(images_test, labels_test):
-        return
+    def test_model(self, images_test, labels_test):
+
+        accuracy = 0
+
+        for testing_example_index in range(len(images_test)):
+            query = self.query(images_test[testing_example_index])
+            if np.argmax(query[4]) == labels_test[testing_example_index]:
+                accuracy += 1
+
+        return accuracy
 
 
 
@@ -198,15 +178,17 @@ images_test, labels_test = load_mnist('mnist_data', kind='t10k')
 pixels = images_test[7623] # Gets the pixel values of the 487th image in the testing set
 save_image(pixels) # Saves the 69th image of the testing set as mnist_digit.png
 
-
 neural_net = Neural_Network()
-query = neural_net.query(pixels)
-print('Untrained Output')
-print(query[4])
-print(query[4].sum()) # should equal 100
+print('Model Training .....')
+neural_net.train(images_train, labels_train, 0.01)
 
-print('Trained Output')
-# neural_net.train(images_train, labels_train, 1, True)
+print('-------------- RESULT --------------')
 query = neural_net.query(pixels)
+number = np.argmax(query[4])
 print(query[4])
-print(query[4].sum()) # should equal 100
+print('This number is a ', number, '!')
+print('-------------- TEST RESULTS --------------')
+print(neural_net.test_model(images_test, labels_test), 'out of 10,000 correct')
+
+
+
