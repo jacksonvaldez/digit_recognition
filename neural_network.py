@@ -86,14 +86,18 @@ class NeuralNetwork:
         biases1_gradient_final /= 60000
         biases2_gradient_final /= 60000
 
-        # pdb.set_trace()
         var1 = weights1.sum()
+        var2 = weights2.sum()
+        var3 = biases1.sum()
+        var4 = biases2.sum()
         weights1 -= learn_rate * weights1_gradient_final
         weights2 -= learn_rate * weights2_gradient_final
         biases1 -= learn_rate * biases1_gradient_final
         biases2 -= learn_rate * biases2_gradient_final
-        var2 = weights1.sum()
-        print(var2 - var1)
+        print(weights1.sum() - var1)
+        print(weights2.sum() - var2)
+        print(biases1.sum() - var3)
+        print(biases2.sum() - var4)
 
         return weights1, weights2, biases1, biases2
 
