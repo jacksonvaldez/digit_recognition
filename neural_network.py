@@ -1,4 +1,5 @@
 import numpy as np
+import pdb
 
 # Neural network layers: 784(input) - 16(hidden) - 10(output)
 class NeuralNetwork:
@@ -38,16 +39,15 @@ class NeuralNetwork:
         biases1 = np.load('trained_params/biases1.npy')
         biases2 = np.load('trained_params/biases2.npy')
 
-        weights1_gradient_final = np.zeros([16, 784])
-        weights2_gradient_final = np.zeros([10, 16])
-        biases1_gradient_final = np.zeros([16, 1])
-        biases2_gradient_final = np.zeros([10, 1])
+        weights1_gradient_final = np.zeros([16, 784], dtype=np.float64)
+        weights2_gradient_final = np.zeros([10, 16], dtype=np.float64)
+        biases1_gradient_final = np.zeros([16, 1], dtype=np.float64)
+        biases2_gradient_final = np.zeros([10, 1], dtype=np.float64)
 
         for training_example_index in range(len(images_train)):
             query = self.query(images_train[training_example_index])
-            desired_output = np.full(10, 0).reshape(10, 1)
+            desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
             desired_output[labels_train[training_example_index]] = 1
-
 
             term1 = 2 * (query[4] - desired_output)
             term2 = self.probability_derivative(query[3])
@@ -75,21 +75,25 @@ class NeuralNetwork:
             biases1_gradient = term4 * term3 * term2 * term1
             biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
 
-
             weights1_gradient_final += weights1_gradient
             weights2_gradient_final += weights2_gradient
             biases1_gradient_final += biases1_gradient
             biases2_gradient_final += biases2_gradient
+
 
         weights1_gradient_final /= 60000
         weights2_gradient_final /= 60000
         biases1_gradient_final /= 60000
         biases2_gradient_final /= 60000
 
-        weights1 = weights1 - learn_rate * weights1_gradient_final
-        weights2 = weights2 - learn_rate * weights2_gradient_final
-        biases1 = biases1 - learn_rate * biases1_gradient_final
-        biases2 = biases2 - learn_rate * biases2_gradient_final
+        # pdb.set_trace()
+        var1 = weights1.sum()
+        weights1 -= learn_rate * weights1_gradient_final
+        weights2 -= learn_rate * weights2_gradient_final
+        biases1 -= learn_rate * biases1_gradient_final
+        biases2 -= learn_rate * biases2_gradient_final
+        var2 = weights1.sum()
+        print(var2 - var1)
 
         return weights1, weights2, biases1, biases2
 
