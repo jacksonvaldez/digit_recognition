@@ -80,12 +80,6 @@ class NeuralNetwork:
             biases1_gradient_final += biases1_gradient
             biases2_gradient_final += biases2_gradient
 
-
-        weights1_gradient_final /= 60000
-        weights2_gradient_final /= 60000
-        biases1_gradient_final /= 60000
-        biases2_gradient_final /= 60000
-
         var1 = weights1.sum()
         var2 = weights2.sum()
         var3 = biases1.sum()
@@ -98,7 +92,6 @@ class NeuralNetwork:
         print(weights2.sum() - var2)
         print(biases1.sum() - var3)
         print(biases2.sum() - var4)
-
         return weights1, weights2, biases1, biases2
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
