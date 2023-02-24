@@ -79,6 +79,7 @@ class NeuralNetwork:
             weights2_gradient_final += weights2_gradient
             biases1_gradient_final += biases1_gradient
             biases2_gradient_final += biases2_gradient
+            # pdb.set_trace()
 
         var1 = weights1.sum()
         var2 = weights2.sum()

@@ -7,7 +7,7 @@ print('Model Training .....')
 
 images_train, labels_train = load_mnist('mnist_data', kind='train')
 neural_net = NeuralNetwork()
-trained_params = neural_net.train(images_train, labels_train, 0.001)
+trained_params = neural_net.train(images_train, labels_train, 0.01)
 
 # print('weights1:', trained_params[0].shape, trained_params[0].dtype)
 # print('weights2:', trained_params[1].shape, trained_params[1].dtype)
