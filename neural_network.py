@@ -10,16 +10,12 @@ class NeuralNetwork:
         return
 
     def probability(self, x):
-        sum = np.sum(x)
-        return x / sum
-
-    def probability_derivative(self, x):
-        sum = np.sum(x)
-
-        numerator = sum - x
-        denominator = sum * sum
-        result = numerator / denominator
-        return result
+        # Subtract the maximum value from each element to avoid overflow
+        x = x - np.max(x)
+        # Compute the exponentials of each element
+        exp_x = np.exp(x)
+        # Normalize by dividing each row by the sum of its elements
+        return exp_x / np.sum(exp_x)
 
     def reLU(self, x):
         return np.maximum(0, x)
@@ -48,30 +44,25 @@ class NeuralNetwork:
             desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
             desired_output[labels_train[training_example_index]] = 1
 
-            term1 = 2 * (query[4] - desired_output)
-            term2 = self.probability_derivative(query[3])
-            term3 = query[2].reshape(1, 16)
-            weights2_gradient = term3 * term2 * term1
+            term1 = query[4] - desired_output
+            term2 = query[2].reshape(1, 16)
+            weights2_gradient = term2 * term1
 
-            term1 = 2 * (query[4] - desired_output)
-            term2 = self.probability_derivative(query[3])
-            term3 = np.sum(weights2, axis=0).reshape(1, 16)
-            term4 = self.reLU_derivative(query[1]).reshape(1, 16)
-            term5 = query[0].reshape(784, 1)
-            weights1_gradient = (term1 * term2 * term3 * term4).reshape(10, 16, 1)
-            term5 = term5.reshape(1, 1, 784)
-            weights1_gradient = weights1_gradient * term5
+            term1 = query[4] - desired_output
+            term2 = np.sum(weights2, axis=0).reshape(1, 16)
+            term3 = self.reLU_derivative(query[1]).reshape(1, 16)
+            term4 = query[0].reshape(1, 1, 784)
+            weights1_gradient = (term1 * term2 * term3).reshape(10, 16, 1)
+            weights1_gradient = weights1_gradient * term4
             weights1_gradient = np.sum(weights1_gradient, axis=0)
 
-            term1 = 2 * (query[4] - desired_output)
-            term2 = self.probability_derivative(query[3])
-            biases2_gradient = term2 * term1
+            term1 = query[4] - desired_output
+            biases2_gradient = term1
 
-            term1 = 2 * (query[4] - desired_output)
-            term2 = self.probability_derivative(query[3])
-            term3 = np.sum(weights2, axis=0).reshape(1, 16)
-            term4 = self.reLU_derivative(query[1]).reshape(1, 16)
-            biases1_gradient = term4 * term3 * term2 * term1
+            term1 = query[4] - desired_output
+            term2 = np.sum(weights2, axis=0).reshape(1, 16)
+            term3 = self.reLU_derivative(query[1]).reshape(1, 16)
+            biases1_gradient = term3 * term2 * term1
             biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
 
             weights1_gradient_final += weights1_gradient
@@ -80,18 +71,23 @@ class NeuralNetwork:
             biases2_gradient_final += biases2_gradient
             # pdb.set_trace()
 
-        var1 = weights1.sum()
-        var2 = weights2.sum()
-        var3 = biases1.sum()
-        var4 = biases2.sum()
+        weights1_gradient_final /= 60000
+        weights2_gradient_final /= 60000
+        biases1_gradient_final /= 60000
+        biases2_gradient_final /= 60000
+
+        weights1_old = np.array(weights1)
+        weights2_old = np.array(weights2)
+        biases1_old = np.array(biases1)
+        biases2_old = np.array(biases2)
         weights1 -= learn_rate * weights1_gradient_final
         weights2 -= learn_rate * weights2_gradient_final
         biases1 -= learn_rate * biases1_gradient_final
         biases2 -= learn_rate * biases2_gradient_final
-        print(weights1.sum() - var1)
-        print(weights2.sum() - var2)
-        print(biases1.sum() - var3)
-        print(biases2.sum() - var4)
+        print((weights1 - weights1_old).sum())
+        print((weights2 - weights2_old).sum())
+        print((biases1 - biases1_old).sum())
+        print((biases2 - biases2_old).sum())
         return weights1, weights2, biases1, biases2
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
