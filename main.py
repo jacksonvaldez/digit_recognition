@@ -14,11 +14,10 @@ def save_image(pixels):
     return
 
 
-
-
-
 # Load the MNIST dataset
 images_test, labels_test = load_mnist('mnist_data', kind='t10k')
+save_image(images_test[0])
+
 
 print('-------------- TEST RESULTS --------------')
 neural_net = NeuralNetwork()

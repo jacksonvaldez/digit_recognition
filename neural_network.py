@@ -27,6 +27,11 @@ class NeuralNetwork:
     def reLU_derivative(self, x):
         return np.where(x <= 0, 0, 1)
 
+    def scale_array(self, x, new_max):
+        max_element = np.abs(x).max()
+        scale_by = new_max / max_element
+        return x * scale_by
+
 
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
