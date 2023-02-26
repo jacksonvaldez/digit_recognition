@@ -3,17 +3,25 @@ from mnist_data.load import load_mnist
 import numpy as np
 import pdb
 
+def get_learn_rate(epoch):
+	lr = 0.5 ** (epoch / 20)
+	return lr
+
 
 for x in range(500):
-	print('Model Training .....')
-
-	learn_rate = np.load('learn_rate.npy')[0]
-	print('Learning Rate:', learn_rate)
+	print('------------------- Model Training -------------------')
+	epoch = np.load('epoch.npy')[0]
+	learn_rate = get_learn_rate(epoch)
+	print('Epoch:', epoch)
+	print('Learn Rate:', learn_rate)
 
 	images_train, labels_train = load_mnist('mnist_data', kind='train')
 	neural_net = NeuralNetwork()
 
-	trained_params = neural_net.train(images_train, labels_train, learn_rate)
+	trained_params = neural_net.train(images_train, labels_train, 0.1)
+
+	epoch += 1
+	np.save('epoch.npy', [epoch])
 
 	np.save('trained_params/weights1.npy', trained_params[0])
 	np.save('trained_params/weights2.npy', trained_params[1])
