@@ -39,6 +39,8 @@ class NeuralNetwork:
         biases1_gradient_final = np.zeros([16, 1], dtype=np.float64)
         biases2_gradient_final = np.zeros([10, 1], dtype=np.float64)
 
+        # indices = np.random.permutation(np.arange(60000))
+
         for training_example_index in range(len(images_train)):
             query = self.query(images_train[training_example_index])
             desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
@@ -65,29 +67,12 @@ class NeuralNetwork:
             biases1_gradient = term3 * term2 * term1
             biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
 
-            weights1_gradient_final += weights1_gradient
-            weights2_gradient_final += weights2_gradient
-            biases1_gradient_final += biases1_gradient
-            biases2_gradient_final += biases2_gradient
+            weights1 -= learn_rate * weights1_gradient
+            weights2 -= learn_rate * weights2_gradient
+            biases1 -= learn_rate * biases1_gradient
+            biases2 -= learn_rate * biases2_gradient
             # pdb.set_trace()
-
-        weights1_gradient_final /= 60000
-        weights2_gradient_final /= 60000
-        biases1_gradient_final /= 60000
-        biases2_gradient_final /= 60000
-
-        weights1_old = np.array(weights1)
-        weights2_old = np.array(weights2)
-        biases1_old = np.array(biases1)
-        biases2_old = np.array(biases2)
-        weights1 -= learn_rate * weights1_gradient_final
-        weights2 -= learn_rate * weights2_gradient_final
-        biases1 -= learn_rate * biases1_gradient_final
-        biases2 -= learn_rate * biases2_gradient_final
-        print((weights1 - weights1_old).sum())
-        print((weights2 - weights2_old).sum())
-        print((biases1 - biases1_old).sum())
-        print((biases2 - biases2_old).sum())
+            
         return weights1, weights2, biases1, biases2
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
