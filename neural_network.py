@@ -9,6 +9,28 @@ class NeuralNetwork:
 
         return
 
+    def compute_cost(self, images_train, labels_train):
+        cost = 0
+
+        assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
+
+        weights1 = np.load('trained_params/weights1.npy')
+        weights2 = np.load('trained_params/weights2.npy')
+        biases1 = np.load('trained_params/biases1.npy')
+        biases2 = np.load('trained_params/biases2.npy')
+
+        indices = np.random.permutation(np.arange(60000))
+
+        for training_example_index in indices:
+            query = self.query(images_train[training_example_index])
+            desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
+            desired_output[labels_train[training_example_index]] = 1
+
+            cost += ((query[4] - desired_output) * (query[4] - desired_output)).sum()
+
+        cost /= 60000
+        return cost
+        
     def probability(self, x):
         # Subtract the maximum value from each element to avoid overflow
         x = x - np.max(x)
@@ -27,7 +49,7 @@ class NeuralNetwork:
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
     def train(self, images_train, labels_train, learn_rate):
 
-        assert len(images_train) == len(labels_train) # The number of training images should match the number of labels for all the images
+        assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
 
         weights1 = np.load('trained_params/weights1.npy')
         weights2 = np.load('trained_params/weights2.npy')
@@ -35,7 +57,6 @@ class NeuralNetwork:
         biases2 = np.load('trained_params/biases2.npy')
 
         indices = np.random.permutation(np.arange(60000))
-        # batches = indices.reshape()
 
         for training_example_index in indices:
             query = self.query(images_train[training_example_index])
