@@ -4,7 +4,7 @@ import numpy as np
 import pdb
 
 def get_learn_rate(epoch):
-	lr = 0.5 ** (epoch / 20)
+	lr = 1 * (0.1 ** (epoch / 20))
 	return lr
 
 
