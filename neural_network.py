@@ -34,14 +34,10 @@ class NeuralNetwork:
         biases1 = np.load('trained_params/biases1.npy')
         biases2 = np.load('trained_params/biases2.npy')
 
-        weights1_gradient_final = np.zeros([16, 784], dtype=np.float64)
-        weights2_gradient_final = np.zeros([10, 16], dtype=np.float64)
-        biases1_gradient_final = np.zeros([16, 1], dtype=np.float64)
-        biases2_gradient_final = np.zeros([10, 1], dtype=np.float64)
+        indices = np.random.permutation(np.arange(60000))
+        # batches = indices.reshape()
 
-        # indices = np.random.permutation(np.arange(60000))
-
-        for training_example_index in range(len(images_train)):
+        for training_example_index in indices:
             query = self.query(images_train[training_example_index])
             desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
             desired_output[labels_train[training_example_index]] = 1
@@ -72,7 +68,7 @@ class NeuralNetwork:
             biases1 -= learn_rate * biases1_gradient
             biases2 -= learn_rate * biases2_gradient
             # pdb.set_trace()
-            
+
         return weights1, weights2, biases1, biases2
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
