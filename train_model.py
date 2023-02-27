@@ -9,7 +9,7 @@ def get_learn_rate(epoch):
 
 	lr = 0.0000001 * (0.1 ** (epoch / 40))
 
-	return lr
+	return 0.000001
 
 
 for x in range(500):
