@@ -8,14 +8,14 @@ weights2 = np.load('trained_params/weights2.npy')
 biases1 = np.load('trained_params/biases1.npy')
 biases2 = np.load('trained_params/biases2.npy')
 
-print(weights2)
-print(biases2)
+# print(weights2)
+# print(biases2)
 
 # epoch = [0]
 # np.save('epoch.npy', epoch)
 
-# images_train, labels_train = load_mnist('mnist_data', kind='train')
-# neural_net = NeuralNetwork()
-# print('Computing Cost...')
-# cost = neural_net.compute_cost(images_train, labels_train)
-# print('Cost: ', cost)
+images_train, labels_train = load_mnist('mnist_data', kind='train')
+neural_net = NeuralNetwork(weights1, weights2, biases1, biases2)
+print('Computing Cost...')
+cost = neural_net.compute_cost(images_train, labels_train)
+print('Cost: ', cost)
