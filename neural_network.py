@@ -31,7 +31,7 @@ class NeuralNetwork:
         cost /= 60000
         return cost
         
-    def probability(self, x):
+    def softmax(self, x):
         # Subtract the maximum value from each element to avoid overflow
         x = x - np.max(x)
         # Compute the exponentials of each element
@@ -109,7 +109,7 @@ class NeuralNetwork:
         unactive_o = weights2 * active_h.reshape(1, 16)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
         unactive_o = unactive_o + biases2
-        active_o = self.probability(unactive_o) # Uses probability to compute activated neurons of output layer
+        active_o = self.softmax(unactive_o) # Uses probability to compute activated neurons of output layer
 
         return pixels, unactive_h, active_h, unactive_o, active_o
 
