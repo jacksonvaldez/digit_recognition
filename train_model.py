@@ -18,7 +18,7 @@ for x in range(500):
 	images_train, labels_train = load_mnist('mnist_data', kind='train')
 	neural_net = NeuralNetwork()
 
-	trained_params = neural_net.train(images_train, labels_train, learn_rate)
+	trained_params = neural_net.train(images_train, labels_train, 0.1)
 
 	epoch += 1
 	np.save('epoch.npy', [epoch])
