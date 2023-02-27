@@ -1,7 +1,7 @@
 import numpy as np
 import pdb
 
-# Neural network layers: 784(input) - 16(hidden) - 10(output)
+# Neural network layers: 784(input) - 128(hidden) - 10(output)
 class NeuralNetwork:
     # CREATE Neural Network and set up parameters
 
@@ -57,14 +57,14 @@ class NeuralNetwork:
             desired_output[labels_train[training_example_index]] = 1
 
             term1 = query[4] - desired_output
-            term2 = query[2].reshape(1, 16)
+            term2 = query[2].reshape(1, 128)
             weights2_gradient = term2 * term1
 
             term1 = query[4] - desired_output
-            term2 = np.sum(self.weights2, axis=0).reshape(1, 16)
-            term3 = self.reLU_derivative(query[1]).reshape(1, 16)
+            term2 = np.sum(self.weights2, axis=0).reshape(1, 128)
+            term3 = self.reLU_derivative(query[1]).reshape(1, 128)
             term4 = query[0].reshape(1, 1, 784)
-            weights1_gradient = (term1 * term2 * term3).reshape(10, 16, 1)
+            weights1_gradient = (term1 * term2 * term3).reshape(10, 128, 1)
             weights1_gradient = weights1_gradient * term4
             weights1_gradient = np.sum(weights1_gradient, axis=0)
 
@@ -72,10 +72,10 @@ class NeuralNetwork:
             biases2_gradient = term1
 
             term1 = query[4] - desired_output
-            term2 = np.sum(self.weights2, axis=0).reshape(1, 16)
-            term3 = self.reLU_derivative(query[1]).reshape(1, 16)
+            term2 = np.sum(self.weights2, axis=0).reshape(1, 128)
+            term3 = self.reLU_derivative(query[1]).reshape(1, 128)
             biases1_gradient = term3 * term2 * term1
-            biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
+            biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(128, 1)
 
             self.weights1 -= learn_rate * weights1_gradient
             self.weights2 -= learn_rate * weights2_gradient
@@ -88,14 +88,14 @@ class NeuralNetwork:
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
     def query(self, pixels):
 
-        # Compute the 16 neuron values of the hidden layer 'h'
+        # Compute the 128 neuron values of the hidden layer 'h'
         unactive_h = self.weights1 * pixels.reshape(1, len(pixels))
-        unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
+        unactive_h = np.sum(unactive_h, axis=1).reshape(128, 1)
         unactive_h = unactive_h + self.biases1
         active_h = self.reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
         # Compute the 10 neuron values of the output layer 'o'
-        unactive_o = self.weights2 * active_h.reshape(1, 16)
+        unactive_o = self.weights2 * active_h.reshape(1, 128)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
         unactive_o = unactive_o + self.biases2
         active_o = self.softmax(unactive_o) # Uses probability to compute activated neurons of output layer
