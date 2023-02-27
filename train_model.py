@@ -20,16 +20,20 @@ for x in range(500):
 	print('Learn Rate:', learn_rate)
 
 	images_train, labels_train = load_mnist('mnist_data', kind='train')
-	neural_net = NeuralNetwork()
+	weights1 = np.load('trained_params/weights1.npy')
+	weights2 = np.load('trained_params/weights2.npy')
+	biases1 = np.load('trained_params/biases1.npy')
+	biases2 = np.load('trained_params/biases2.npy')
 
-	trained_params = neural_net.train(images_train, labels_train, learn_rate)
+	neural_net = NeuralNetwork(weights1, weights2, biases1, biases2)
+	neural_net.train(images_train, labels_train, learn_rate)
 
 	epoch += 1
 	np.save('epoch.npy', [epoch])
 
-	np.save('trained_params/weights1.npy', trained_params[0])
-	np.save('trained_params/weights2.npy', trained_params[1])
-	np.save('trained_params/biases1.npy', trained_params[2])
-	np.save('trained_params/biases2.npy', trained_params[3])
+	np.save('trained_params/weights1.npy', neural_net.weights1)
+	np.save('trained_params/weights2.npy', neural_net.weights2)
+	np.save('trained_params/biases1.npy', neural_net.biases1)
+	np.save('trained_params/biases2.npy', neural_net.biases2)
 
 	print('Model Trained!')

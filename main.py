@@ -20,5 +20,10 @@ save_image(images_test[0])
 
 
 print('-------------- TESTING RESULTS --------------')
-neural_net = NeuralNetwork()
+weights1 = np.load('trained_params/weights1.npy')
+weights2 = np.load('trained_params/weights2.npy')
+biases1 = np.load('trained_params/biases1.npy')
+biases2 = np.load('trained_params/biases2.npy')
+
+neural_net = NeuralNetwork(weights1, weights2, biases1, biases2)
 print(neural_net.test_model(images_test, labels_test), 'out of 10,000 testing examples correct!')

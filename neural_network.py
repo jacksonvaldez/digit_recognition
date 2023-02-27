@@ -5,19 +5,17 @@ import pdb
 class NeuralNetwork:
     # CREATE Neural Network and set up parameters
 
-    def __init__(self):
-
+    def __init__(self, weights1, weights2, biases1, biases2):
+        self.weights1 = weights1
+        self.weights2 = weights2
+        self.biases1 = biases1
+        self.biases2 = biases2
         return
 
     def compute_cost(self, images_train, labels_train):
         cost = 0
 
         assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
-
-        weights1 = np.load('trained_params/weights1.npy')
-        weights2 = np.load('trained_params/weights2.npy')
-        biases1 = np.load('trained_params/biases1.npy')
-        biases2 = np.load('trained_params/biases2.npy')
 
         indices = np.random.permutation(np.arange(60000))
 
@@ -51,11 +49,6 @@ class NeuralNetwork:
 
         assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
 
-        weights1 = np.load('trained_params/weights1.npy')
-        weights2 = np.load('trained_params/weights2.npy')
-        biases1 = np.load('trained_params/biases1.npy')
-        biases2 = np.load('trained_params/biases2.npy')
-
         indices = np.random.permutation(np.arange(60000))
 
         for training_example_index in indices:
@@ -68,7 +61,7 @@ class NeuralNetwork:
             weights2_gradient = term2 * term1
 
             term1 = query[4] - desired_output
-            term2 = np.sum(weights2, axis=0).reshape(1, 16)
+            term2 = np.sum(self.weights2, axis=0).reshape(1, 16)
             term3 = self.reLU_derivative(query[1]).reshape(1, 16)
             term4 = query[0].reshape(1, 1, 784)
             weights1_gradient = (term1 * term2 * term3).reshape(10, 16, 1)
@@ -79,36 +72,32 @@ class NeuralNetwork:
             biases2_gradient = term1
 
             term1 = query[4] - desired_output
-            term2 = np.sum(weights2, axis=0).reshape(1, 16)
+            term2 = np.sum(self.weights2, axis=0).reshape(1, 16)
             term3 = self.reLU_derivative(query[1]).reshape(1, 16)
             biases1_gradient = term3 * term2 * term1
             biases1_gradient = np.sum(biases1_gradient, axis=0).reshape(16, 1)
 
-            weights1 -= learn_rate * weights1_gradient
-            weights2 -= learn_rate * weights2_gradient
-            biases1 -= learn_rate * biases1_gradient
-            biases2 -= learn_rate * biases2_gradient
+            self.weights1 -= learn_rate * weights1_gradient
+            self.weights2 -= learn_rate * weights2_gradient
+            self.biases1 -= learn_rate * biases1_gradient
+            self.biases2 -= learn_rate * biases2_gradient
             # pdb.set_trace()
 
-        return weights1, weights2, biases1, biases2
+        return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
     def query(self, pixels):
-        weights1 = np.load('trained_params/weights1.npy')
-        weights2 = np.load('trained_params/weights2.npy')
-        biases1 = np.load('trained_params/biases1.npy')
-        biases2 = np.load('trained_params/biases2.npy')
 
         # Compute the 16 neuron values of the hidden layer 'h'
-        unactive_h = weights1 * pixels.reshape(1, len(pixels))
+        unactive_h = self.weights1 * pixels.reshape(1, len(pixels))
         unactive_h = np.sum(unactive_h, axis=1).reshape(16, 1)
-        unactive_h = unactive_h + biases1
+        unactive_h = unactive_h + self.biases1
         active_h = self.reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
         # Compute the 10 neuron values of the output layer 'o'
-        unactive_o = weights2 * active_h.reshape(1, 16)
+        unactive_o = self.weights2 * active_h.reshape(1, 16)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
-        unactive_o = unactive_o + biases2
+        unactive_o = unactive_o + self.biases2
         active_o = self.softmax(unactive_o) # Uses probability to compute activated neurons of output layer
 
         return pixels, unactive_h, active_h, unactive_o, active_o
