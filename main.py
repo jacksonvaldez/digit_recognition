@@ -19,6 +19,6 @@ images_test, labels_test = load_mnist('mnist_data', kind='t10k')
 save_image(images_test[0])
 
 
-print('-------------- TEST RESULTS --------------')
+print('-------------- TESTING RESULTS --------------')
 neural_net = NeuralNetwork()
-print(neural_net.test_model(images_test, labels_test), 'out of 10,000 correct')
+print(neural_net.test_model(images_test, labels_test), 'out of 10,000 testing examples correct!')
