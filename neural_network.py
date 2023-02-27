@@ -38,11 +38,10 @@ class NeuralNetwork:
         return exp_x / np.sum(exp_x)
 
     def reLU(self, x):
-        return np.where(x <= 0, x * 0.01, x * 1)
-        # return np.maximum(0, x)
+        return np.maximum(0, x)
 
     def reLU_derivative(self, x):
-        return np.where(x <= 0, 0.01, 1)
+        return np.where(x <= 0, 0, 1)
 
 
     # TRAIN the model (learning, backward propagation). Creates the most optimized sets of weights and biases
