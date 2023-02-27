@@ -4,8 +4,12 @@ import numpy as np
 import pdb
 
 def get_learn_rate(epoch):
-	lr = 1 * (0.1 ** (epoch / 20))
-	return 0.0000001
+	if epoch > 40:
+		epoch = 40
+
+	lr = 0.0000001 * (0.1 ** (epoch / 20))
+	
+	return lr
 
 
 for x in range(500):
