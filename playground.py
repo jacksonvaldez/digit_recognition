@@ -1,12 +1,10 @@
 import numpy as np
 
-def scale_array(x, new_max):
-    max_element = np.abs(x).max()
-    scale_by = new_max / max_element
-    return x * scale_by
 
-var = np.array([-4, -5, 1, 2, 3])
+weights1 = np.load('trained_params/weights1.npy')
+weights2 = np.load('trained_params/weights2.npy')
+biases1 = np.load('trained_params/biases1.npy')
+biases2 = np.load('trained_params/biases2.npy')
 
-var2 = scale_array(var, 1)
-
-print(var2)
+print(weights2)
+print(biases2)

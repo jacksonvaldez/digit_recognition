@@ -5,7 +5,7 @@ import pdb
 
 def get_learn_rate(epoch):
 	lr = 1 * (0.1 ** (epoch / 20))
-	return lr
+	return 0.0000001
 
 
 for x in range(500):
@@ -18,7 +18,7 @@ for x in range(500):
 	images_train, labels_train = load_mnist('mnist_data', kind='train')
 	neural_net = NeuralNetwork()
 
-	trained_params = neural_net.train(images_train, labels_train, 0.1)
+	trained_params = neural_net.train(images_train, labels_train, learn_rate)
 
 	epoch += 1
 	np.save('epoch.npy', [epoch])
