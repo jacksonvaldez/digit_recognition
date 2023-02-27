@@ -26,7 +26,7 @@ class NeuralNetwork:
             desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
             desired_output[labels_train[training_example_index]] = 1
 
-            cost += ((query[4] - desired_output) * (query[4] - desired_output)).sum()
+            cost -= (desired_output * np.log(query[4])).sum() # Cross Entropy Loss
 
         cost /= 60000
         return cost
