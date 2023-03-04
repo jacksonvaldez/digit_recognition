@@ -113,6 +113,6 @@ class NeuralNetwork:
             if np.argmax(query[4]) == labels_test[testing_example_index]:
                 accuracy += 1
 
-        accuracy = (accuracy / len(labels_test)) * 100
+        accuracy = round(((accuracy / len(labels_test)) * 100), 1) # Turn accuracy into a percentage and round to 1 decimal place
 
         return accuracy
