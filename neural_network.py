@@ -104,6 +104,7 @@ class NeuralNetwork:
 
     # Tests the accurancy of the trained weights and biases using testing data
     def testing_accuracy(self, images_test, labels_test):
+        assert len(images_test) == len(labels_test)
 
         accuracy = 0
 
@@ -111,5 +112,7 @@ class NeuralNetwork:
             query = self.query(images_test[testing_example_index])
             if np.argmax(query[4]) == labels_test[testing_example_index]:
                 accuracy += 1
+
+        accuracy = (accuracy / len(labels_test)) * 100
 
         return accuracy
