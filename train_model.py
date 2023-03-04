@@ -7,7 +7,7 @@ def get_learn_rate(epoch):
 	# if epoch > 40:
 	# 	epoch = 40
 
-	lr = 0.001 * (0.1 ** (epoch / 20))
+	lr = 0.01 * (0.1 ** (epoch / 20))
 
 	return lr
 
