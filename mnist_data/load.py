@@ -17,4 +17,5 @@ def load_mnist(path, kind='train'):
         # dtype argument: Data-type of the returned array elements. In this case, 'np.uint8' means an 8 bit integer or byte (max 255)
         # .reshape turn the images array into a 2D array. Each item in the array contains the 784 pixels of an image
         images = np.frombuffer(images_file.read(), dtype=np.uint8, offset=16).reshape(len(labels), 784)
-    return images, labels
+        images_scaled = images / 255
+    return images_scaled, labels
