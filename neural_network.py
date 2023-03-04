@@ -103,7 +103,7 @@ class NeuralNetwork:
         return pixels, unactive_h, active_h, unactive_o, active_o
 
     # Tests the accurancy of the trained weights and biases using testing data
-    def test_model(self, images_test, labels_test):
+    def testing_accuracy(self, images_test, labels_test):
 
         accuracy = 0
 

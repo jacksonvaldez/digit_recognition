@@ -26,4 +26,4 @@ biases1 = np.load('trained_params/biases1.npy')
 biases2 = np.load('trained_params/biases2.npy')
 
 neural_net = NeuralNetwork(weights1, weights2, biases1, biases2)
-print(neural_net.test_model(images_test, labels_test), 'out of 10,000 testing examples correct!')
+print(neural_net.testing_accuracy(images_test, labels_test), 'out of 10,000 testing examples correct!')
