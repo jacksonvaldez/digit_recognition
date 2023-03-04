@@ -12,6 +12,9 @@ def get_learn_rate(epoch):
 	return lr
 
 
+images_test, labels_test = load_mnist('mnist_data', kind='t10k')
+images_train, labels_train = load_mnist('mnist_data', kind='train')
+
 for x in range(500):
 	print('------------------- Model Training -------------------')
 	epoch = np.load('epoch.npy')[0]
@@ -19,7 +22,6 @@ for x in range(500):
 	print('Epoch:', epoch)
 	print('Learn Rate:', learn_rate)
 
-	images_train, labels_train = load_mnist('mnist_data', kind='train')
 	weights1 = np.load('trained_params/weights1.npy')
 	weights2 = np.load('trained_params/weights2.npy')
 	biases1 = np.load('trained_params/biases1.npy')
@@ -37,3 +39,4 @@ for x in range(500):
 	np.save('trained_params/biases2.npy', neural_net.biases2)
 
 	print('Model Trained!')
+	print(neural_net.test_model(images_test, labels_test), 'out of 10,000 testing examples correct!')
