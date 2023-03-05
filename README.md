@@ -4,5 +4,5 @@ This repository contains the code for a vanilla neural network that classifies 2
 
 # Model Info
 1. Input layer: 784 neurons
-2. Hidden Layer: 76 neurons (activated with ReLU)
+2. Hidden Layer: 85 neurons (activated with ReLU)
 3. Output Layer: 10 neurons (activated with softmax)

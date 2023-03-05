@@ -1,7 +1,7 @@
 import numpy as np
 import pdb
 
-# Neural network layers: 784(input) - 76(hidden) - 10(output)
+# Neural network layers: 784(input) - 85(hidden) - 10(output)
 class NeuralNetwork:
     # CREATE Neural Network and set up parameters
 
@@ -65,13 +65,13 @@ class NeuralNetwork:
             term7 = 1
 
             # term1, term2
-            weights2_gradient = term2.reshape(1, 76) * term1
+            weights2_gradient = term2.reshape(1, 85) * term1
             assert weights2_gradient.shape == self.weights2.shape
             
 
             # term1, term4, term5, term6
-            weights1_gradient = term1 * term4 * term5.reshape(1, 76)
-            weights1_gradient = weights1_gradient.reshape(10, 76, 1) * term6.reshape(1, 1, 784)
+            weights1_gradient = term1 * term4 * term5.reshape(1, 85)
+            weights1_gradient = weights1_gradient.reshape(10, 85, 1) * term6.reshape(1, 1, 784)
             weights1_gradient = weights1_gradient.sum(axis=0)
             assert weights1_gradient.shape == self.weights1.shape
 
@@ -80,8 +80,8 @@ class NeuralNetwork:
             assert biases2_gradient.shape == self.biases2.shape
 
             #term1, term4, term5, term7
-            biases1_gradient = term1 * term4 * term5.reshape(1, 76) * term7
-            biases1_gradient = biases1_gradient.sum(axis=0).reshape(76, 1)
+            biases1_gradient = term1 * term4 * term5.reshape(1, 85) * term7
+            biases1_gradient = biases1_gradient.sum(axis=0).reshape(85, 1)
             assert biases1_gradient.shape == self.biases1.shape
 
             self.weights1 -= learn_rate * weights1_gradient
@@ -98,14 +98,14 @@ class NeuralNetwork:
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
     def query(self, pixels):
 
-        # Compute the 76 neuron values of the hidden layer 'h'
+        # Compute the 85 neuron values of the hidden layer 'h'
         unactive_h = self.weights1 * pixels.reshape(1, len(pixels))
-        unactive_h = np.sum(unactive_h, axis=1).reshape(76, 1)
+        unactive_h = np.sum(unactive_h, axis=1).reshape(85, 1)
         unactive_h = unactive_h + self.biases1
         active_h = self.reLU(unactive_h) # Uses ReLU(Rectified Linear Unit) to create activated neurons.
 
         # Compute the 10 neuron values of the output layer 'o'
-        unactive_o = self.weights2 * active_h.reshape(1, 76)
+        unactive_o = self.weights2 * active_h.reshape(1, 85)
         unactive_o = np.sum(unactive_o, axis=1).reshape(10, 1)
         unactive_o = unactive_o + self.biases2
         active_o = self.softmax(unactive_o) # Uses probability to compute activated neurons of output layer
