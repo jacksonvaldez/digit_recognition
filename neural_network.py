@@ -75,8 +75,8 @@ class NeuralNetwork:
             weights1_gradient = weights1_gradient.sum(axis=0)
             assert weights1_gradient.shape == self.weights1.shape
 
-            # term1
-            biases2_gradient = term1
+            # term1, term3
+            biases2_gradient = term1 * term3
             assert biases2_gradient.shape == self.biases2.shape
 
             #term1, term4, term5, term7
