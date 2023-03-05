@@ -22,7 +22,10 @@ biases2 = np.load('trained_params/biases2.npy')
 
 neural_net = NeuralNetwork(weights1, weights2, biases1, biases2)
 images_test, labels_test = load_mnist('mnist_data', kind='t10k')
+images_train, labels_train = load_mnist('mnist_data', kind='train')
 
-print('---------------------------------------------------------------')
+print('--------------------------------------------')
 print(f'Testing Accuracy: {neural_net.testing_accuracy(images_test, labels_test)}%')
-print('---------------------------------------------------------------')
+print('--------------------------------------------')
+print(f'Cost: {neural_net.compute_cost(images_train, labels_train)}')
+print('--------------------------------------------')
