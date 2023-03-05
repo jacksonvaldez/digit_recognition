@@ -50,6 +50,7 @@ class NeuralNetwork:
         assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
 
         indices = np.random.permutation(np.arange(60000))
+        progress = 0
 
         for training_example_index in indices:
             query = self.query(images_train[training_example_index])
@@ -81,8 +82,11 @@ class NeuralNetwork:
             self.weights2 -= learn_rate * weights2_gradient
             self.biases1 -= learn_rate * biases1_gradient
             self.biases2 -= learn_rate * biases2_gradient
-            # pdb.set_trace()
+            
+            progress += 1
+            print(f'Progress: {progress}/60000', end='\r')
 
+        print('')
         return
 
     # USE neural network to make predictions (forward propagation). Takes in the pixels of an image and creates a prediction of what the digit is.
