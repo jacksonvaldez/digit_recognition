@@ -26,7 +26,7 @@ class NeuralNetwork:
 
             cost -= (desired_output * np.log(query[4])).sum() # Cross Entropy Loss
 
-        return cost
+        return round(cost)
         
     def softmax(self, x):
         # Subtract the maximum value from each element to avoid overflow
