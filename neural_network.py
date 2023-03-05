@@ -12,21 +12,21 @@ class NeuralNetwork:
         self.biases2 = biases2
         return
 
-    def compute_cost(self, images_train, labels_train):
+    def compute_cost(self, images, labels):
+        assert len(images) == len(labels)
+        length = len(labels)
+        indices = np.random.permutation(np.arange(length))
         cost = 0
 
-        assert len(images_train) & len(labels_train) == 60000 # The number of training images and labels should be 60000
-
-        indices = np.random.permutation(np.arange(60000))
-
         for training_example_index in indices:
-            query = self.query(images_train[training_example_index])
+            query = self.query(images[training_example_index])
             desired_output = np.full(10, 0, dtype=np.float64).reshape(10, 1)
-            desired_output[labels_train[training_example_index]] = 1
+            desired_output[labels[training_example_index]] = 1
 
             cost -= (desired_output * np.log(query[4])).sum() # Cross Entropy Loss
 
-        return round(cost)
+        cost /= length
+        return round(cost, 2)
         
     def softmax(self, x):
         # Subtract the maximum value from each element to avoid overflow
@@ -113,16 +113,16 @@ class NeuralNetwork:
         return pixels, unactive_h, active_h, unactive_o, active_o
 
     # Tests the accurancy of the trained weights and biases using testing data
-    def testing_accuracy(self, images_test, labels_test):
-        assert len(images_test) == len(labels_test)
+    def compute_accuracy(self, images, labels):
+        assert len(images) == len(labels)
 
         accuracy = 0
 
-        for testing_example_index in range(len(images_test)):
-            query = self.query(images_test[testing_example_index])
-            if np.argmax(query[4]) == labels_test[testing_example_index]:
+        for testing_example_index in range(len(images)):
+            query = self.query(images[testing_example_index])
+            if np.argmax(query[4]) == labels[testing_example_index]:
                 accuracy += 1
 
-        accuracy = round(((accuracy / len(labels_test)) * 100), 2) # Turn accuracy into a percentage and round to 1 decimal place
+        accuracy = round(((accuracy / len(labels)) * 100), 2) # Turn accuracy into a percentage and round to 1 decimal place
 
         return accuracy
