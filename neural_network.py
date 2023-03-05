@@ -12,7 +12,7 @@ class NeuralNetwork:
         self.biases2 = biases2
         return
 
-    def compute_cost(self, images, labels):
+    def cost(self, images, labels):
         assert len(images) == len(labels)
         length = len(labels)
         indices = np.random.permutation(np.arange(length))
@@ -26,7 +26,7 @@ class NeuralNetwork:
             cost -= (desired_output * np.log(query[4])).sum() # Cross Entropy Loss
 
         cost /= length
-        return round(cost, 2)
+        return round(cost, 5)
         
     def softmax(self, x):
         # Subtract the maximum value from each element to avoid overflow
@@ -113,7 +113,7 @@ class NeuralNetwork:
         return pixels, unactive_h, active_h, unactive_o, active_o
 
     # Tests the accurancy of the trained weights and biases using testing data
-    def compute_accuracy(self, images, labels):
+    def accuracy(self, images, labels):
         assert len(images) == len(labels)
 
         accuracy = 0

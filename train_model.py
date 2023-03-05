@@ -39,4 +39,4 @@ for x in range(500):
 	np.save('trained_params/biases2.npy', neural_net.biases2)
 
 	print('Model Trained!')
-	print(f"Testing Accuracy: {neural_net.compute_accuracy(images_test, labels_test)}%")
+	print(f"Testing Accuracy: {neural_net.accuracy(images_test, labels_test)}%")
