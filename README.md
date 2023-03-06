@@ -3,7 +3,7 @@
 This repository contains the code for a vanilla neural network that classifies 28 x 28 grayscale handwritten digits using the [mnist dataset](http://yann.lecun.com/exdb/mnist/).
 
 # Model Info
-- Does not use machine learning libraries such as tensorflow
+- Does not use machine learning libraries such as tensorflow or pytorch
 - Uses the MNIST dataset: http://yann.lecun.com/exdb/mnist/
 - Vanilla neural network with 3 layers (784 - 85 - 10)
 - Activation functions used: ReLU and Softmax
